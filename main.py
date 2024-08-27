@@ -9,15 +9,27 @@ def main():
   clock = pygame.time.Clock()
   dt = 0
   playerInstance = player.Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, PLAYER_RADIUS) # ...we just do this like this `player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)`
+  
+  updatable = pygame.sprite.Group()
+  drawable = pygame.sprite.Group()
+
+  updatable.add(playerInstance)
+  drawable.add(playerInstance)
+  
   while True:
      for event in pygame.event.get():
         if event.type == pygame.QUIT:
            return
+        
      screen.fill("black")
-     playerInstance.draw(screen)
-     playerInstance.update(dt)
-     pygame.display.flip()
      dt = clock.tick(60) / 1000
+
+     for updatableObj in updatable:
+        updatableObj.update(dt)
+     for drawableObj in drawable:
+        drawableObj.draw(screen)
+
+     pygame.display.flip()
 
 if __name__ == "__main__":
     main()
