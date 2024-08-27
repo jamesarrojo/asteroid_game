@@ -8,6 +8,7 @@ class Player(circleshape.CircleShape):
     super().__init__(x, y, radius) # super().__init__(x, y, PLAYER_RADIUS)
     self.position = pygame.Vector2(x, y)
     self.rotation = 0
+    self.rate_limit_timer = 0
     # self.radius = PLAYER_RADIUS
 
   def triangle(self):
@@ -24,6 +25,7 @@ class Player(circleshape.CircleShape):
   def rotate(self, dt):
     self.rotation += PLAYER_TURN_SPEED * dt
   def update(self, dt):
+    self.rate_limit_timer -= dt
     keys = pygame.key.get_pressed()
 
     if keys[pygame.K_a]:
@@ -42,11 +44,12 @@ class Player(circleshape.CircleShape):
     self.position += forward * PLAYER_SPEED * dt
 
   def shoot(self):
+    if self.rate_limit_timer > 0:
+      return
+    self.rate_limit_timer = PLAYER_SHOOT_COOLDOWN
     shot = Shot(self.position.x, self.position.y, SHOT_RADIUS)
     # my solution
     # shot.velocity = pygame.Vector2(0, 1)
     # shot.velocity = shot.velocity.rotate(self.rotation)
     # shot.velocity *= PLAYER_SHOOT_SPEED # i think no need to do the *= since shoot() gets called every time we hit space
-
     shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
-    print("Current player rotation:", self.rotation)
